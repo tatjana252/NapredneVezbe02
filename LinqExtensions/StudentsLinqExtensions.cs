@@ -11,5 +11,10 @@ namespace LinqExtensions
         {
             return students.Where(s => s.Subjects.Sum(sub => sub.ESBP) >= esbp).OrderByDescending(s => s.GPA).Take(num).ToList();
         }
+
+        public static List<Student> BudgetRank2(this List<Student> students, int num, int esbp)
+        {
+            return students.Where(s => s.Subjects.Sum(sub => sub.ESBP) >= esbp).OrderByDescending(s => s.GPA).Take(num).ToList();
+        }
     }
 }

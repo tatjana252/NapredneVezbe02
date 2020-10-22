@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Linq
 {
-    class Class1
+    class Program2
     {
     }
 }
