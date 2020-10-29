@@ -6,5 +6,6 @@ namespace Linq
 {
     class Program2
     {
+        public int Int { get; set; }
     }
 }
