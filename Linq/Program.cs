@@ -7,6 +7,26 @@ using System.Linq.Expressions;
 
 namespace Linq
 {
+    interface IUslov
+    {
+        bool Uslov(Student s);
+    }
+
+    class UslovIme : IUslov
+    {
+        private string v;
+
+        public UslovIme(string v)
+        {
+            this.v = v;
+        }
+
+        public bool Uslov(Student s)
+        {
+            return s.Name == v;
+        }
+    }
+
     class Program
     {
         static List<Student> students = new List<Student>();
@@ -50,7 +70,7 @@ namespace Linq
             //    return new { Fullname = $"{s.Name} {s.Lastname}", s.GPA };
             //}).ToList().ForEach(s => { Console.WriteLine(s.Fullname + s.GPA); });
 
-            //students.BudgetRank(3, 0).ForEach(s => Console.WriteLine(s));
+            students.BudgetRank(3, 0).ForEach(s => { Console.WriteLine(s); });
 
             //if(students.Any(s => s.StudentId == 4))
             //{
@@ -69,12 +89,38 @@ namespace Linq
             Student student1 = Pronadji(UslovImePrezime("Pera", "Peric"));
             Console.WriteLine(student1);
 
-            Student student2 = PronadjiFunc(s =>
-            {
-                return s.Name == "Pera" && s.Lastname == "Peric";
-            });
+            //Student student2 = PronadjiFunc(s =>
+            //{
+            //    return s.Name == "Pera" && s.Lastname == "Peric";
+            //});
 
             Foreach((s) => Console.WriteLine(s));
+
+            Pronadji(new UslovIme("Pera"));
+        }
+
+        public static Student Pronadji(IUslov uslov)
+        {
+            foreach (Student s in students)
+            {
+                if (uslov.Uslov(s))
+                {
+                    return s;
+                }
+            }
+            return null;
+        }
+
+        public static Student Pronadji(Uslov uslov)
+        {
+            foreach (Student s in students)
+            {
+                if (uslov(s))
+                {
+                    return s;
+                }
+            }
+            return null;
         }
 
         public delegate bool Uslov(Student s);
@@ -119,23 +165,13 @@ namespace Linq
             return null;
         }
 
-        public static Student Pronadji(Uslov uslov)
+        
+        //vraca poslednji tip, a svi prethodni su ulazi
+        public static Student PronadjiFunc(Func<object, Student, bool, int> uslov)
         {
             foreach (Student s in students)
             {
-                if (uslov(s))
-                {
-                    return s;
-                }
-            }
-            return null;
-        }
-
-        public static Student PronadjiFunc(Func<Student, bool> uslov)
-        {
-            foreach (Student s in students)
-            {
-                if (uslov(s))
+                if (uslov(new object(), s, true) == 1)
                 {
                     return s;
                 }
@@ -155,6 +191,7 @@ namespace Linq
             return null;
         }
 
+        //vraca bool - navedeni tipovi su ulazi
         public static Student PronadjiPredicate(Predicate<Student> uslov)
         {
             foreach (Student s in students)
@@ -167,6 +204,7 @@ namespace Linq
             return null;
         }
 
+        //Action - void, svi navedeni tipovi su ulazi
         public static Student Foreach(Action<Student> action)
         {
             foreach (Student s in students)
